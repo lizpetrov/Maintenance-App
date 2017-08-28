@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "387649536907",
+    "firebase_url": "https://maintanance-app.firebaseio.com",
+    "project_id": "maintanance-app",
+    "storage_bucket": "maintanance-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387649536907:android:af50ba09f33b53ee",
+        "android_client_info": {
+          "package_name": "com.epetrov.wwpmaintanance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387649536907-79vvvf3rqkj6jqtdq4i8r8pma7u8m2u9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.epetrov.wwpmaintanance",
+            "certificate_hash": "f48ee54d21606116c19f6508529cbcf33c0a945e"
+          }
+        },
+        {
+          "client_id": "387649536907-ffpidb0vfl6pin8hq4pvomr3qv2lh3ti.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1DIGLmCSuWwJ1XdxixHB3T73ze7BY3iQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387649536907-6vqqjtecfr7t7sairrkogtlctf6tqvvp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.epetrov.wwpmaintanance"
+              }
+            },
+            {
+              "client_id": "387649536907-ffpidb0vfl6pin8hq4pvomr3qv2lh3ti.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

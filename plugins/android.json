@@ -1,0 +1,56 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-browsertab": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-buildinfo": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-customurlscheme": {
+            "URL_SCHEME": "com.epetrov.wwpmaintanance",
+            "ANDROID_SCHEME": " ",
+            "ANDROID_HOST": " ",
+            "ANDROID_PATHPREFIX": "/",
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-universal-links-plugin": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        },
+        "cordova-plugin-googleplus": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        }
+    },
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.ionicframework.myionicproject206362"
+        }
+    }
+}

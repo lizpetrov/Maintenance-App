@@ -1,0 +1,54 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-browsertab": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-buildinfo": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-customurlscheme": {
+            "URL_SCHEME": "com.epetrov.wwpmaintanance",
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-googleplus": {
+            "REVERSED_CLIENT_ID": "com.epetrov.wwpmaintanance",
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "cordova-universal-links-plugin": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        }
+    },
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.epetrov.wwpmaintanance"
+        }
+    }
+}

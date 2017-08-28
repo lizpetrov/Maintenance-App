@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      New Request
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+    <ion-item>
+     <ion-label>Category</ion-label>
+     <ion-select (ionChange)="setValues(sCat)" [(ngModel)]="sCat">
+          <ion-option [value]="sCat" *ngFor = "let sCat of categories">{{sCat}}  </ion-option> 
+         <ion-option [value]="other">other</ion-option>
+    </ion-select>
+     </ion-item>
+    
+    <ion-item *ngIf="sCat=='other'">
+        <ion-input [(ngModel)]="otherCategory" type="otherCategory" placeholder="Category"></ion-input>
+    </ion-item>
+    
+    <ion-item *ngIf="selectedLocations">
+          <ion-label>Location</ion-label>
+          <ion-select [(ngModel)]="sLocation">
+                <ion-option [value]="sLocation" *ngFor = "let sLocation of selectedLocations">{{sLocation.location.replace("_"," ")}}</ion-option>
+              <ion-option [value]="other">other</ion-option>
+          </ion-select>
+     </ion-item>
+    
+    <ion-item *ngIf="sLocation=='other'">
+        <ion-input [(ngModel)]="otherLocation" type="otherLocation" placeholder="Location"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="selectedProblems">
+          <ion-label>Problem</ion-label>
+          <ion-select [(ngModel)]="sProblem">
+                <ion-option [value]="sProblem" *ngFor = "let sProblem of selectedProblems">{{sProblem.problem.replace("_"," ")}}</ion-option>
+              <ion-option [value]="other">other</ion-option>
+          </ion-select>
+     </ion-item>
+    
+    <ion-item *ngIf="sProblem=='other'">
+        <ion-input [(ngModel)]="otherProblem" type="otherProblem" placeholder="Problem"></ion-input>
+    </ion-item>
+    
+    <ion-item *ngIf="!(!sProblem||!sLocation||!sCat)">
+      <ion-label stacked>Comments</ion-label>
+      <ion-textarea [(ngModel)]="comment"></ion-textarea>
+    </ion-item>
+    
+    <button *ngIf="!(!sProblem||!sLocation||!sCat)" ion-button full (click)="submitRequest()">Submit</button>
+    
+</ion-content>

@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Me
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="logOut()">
+        <ion-icon name="log-out"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+      <div class="list card" *ngIf="userProfile">
+        <ion-item class="profile-item">
+          <div class="profile-picture big-profile-picture">
+            <img src="{{userProfile.photoURL}}">
+          </div>
+          <h2 class="profile-name dark">{{userProfile.displayName}}</h2>
+          <div class="profile-info">{{userProfile.email}}</div>
+        </ion-item>
+      </div>
+    
+      <h2>School: {{schoolName}}</h2>
+    
+        <button ion-button full (click)="changeSchool()">Change School within district</button>
+  
+    
+</ion-content>
