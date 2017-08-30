@@ -10,16 +10,32 @@ import firebase from 'firebase';
 @Injectable()
 export class RequestHandler {
     
-  public firebase : any;
+ 
+    
+    // for get requests
+    //public user: any = null;
+    public schoolName: string = "";
+    public requests = [];
+    
+    public submitted: any;
+    public inProgress: any;
+    public complete: any;
+    
    
   constructor(private af: AngularFire, public profData:ProfileData) {
 
+    console.log("REQUEST HANDLER CONSTRUCTOR");
       
+      this.submitted = [];   
+      this.inProgress = [];   
+      this.complete = [];   
+      
+     // this.loadUserRequests();
   }
 
     submitRequest(category: String, location: String, problem: String, comment: String, school: string, email: String)
     {
-        var uid = this.profData.getUID();
+        var uid = firebase.auth().currentUser.uid;
         
         console.log("Category" + category + "\nLocation: " + location + "\nProblem: " + problem + "\nComment: " + comment + "\nSchool: " + school + "\nEmail: " + email + "\nUID: " + uid);
         
@@ -68,11 +84,13 @@ export class RequestHandler {
           }
             else
             {
+                // NEW REQUEST
+                
                 firebase.database().ref("/schoolData/" + school).child("/requests").update(
                 {[requestID]: {timestamp: Date.now(), submittedBy: email, comments: comment, timesSubmitted: 1}});
             }
     
-    
+
             //add to user profile
             firebase.database().ref("/userProfile/" + uid).child(school).once('value', (snapshot) => {
                 var newRequestIDS = requestID;
@@ -83,6 +101,8 @@ export class RequestHandler {
                               newRequestIDS = snapshot.val() + "|||" + newRequestIDS;
                               firebase.database().ref("/userProfile/" + uid).update(
                               {[school]: newRequestIDS});
+                
+                                this.profData.loadUserRequests();
                           }
  
                     
@@ -90,6 +110,9 @@ export class RequestHandler {
 
         });
     }
+    
+    
+    
     
     
     

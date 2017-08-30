@@ -5,6 +5,7 @@ import firebase from 'firebase';
 import { Observable } from 'rxjs/Rx';
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { AngularFire, AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
+//import { RequestHandler } from '../providers/request-handler';
 
 @Injectable()
 export class ProfileData {
@@ -20,6 +21,11 @@ export class ProfileData {
     public usersEmail: string;
     public isLoaded = false;
   
+public requests = [];
+    public submitted: any;
+    public inProgress: any;
+    public complete: any;
+    
     
     //stuff for loading locations + problems json
     public schoolMaintananceData = [];
@@ -43,7 +49,7 @@ export class ProfileData {
         return this.isLoaded;
     }
     
-    getUID(): String{
+    getUID(): string{
         return this.currentUser.uid;
     }
 
@@ -133,6 +139,7 @@ export class ProfileData {
 
                 this.isLoaded = true;
                 this.loadSchoolLocationData();
+                this.loadUserRequests();
             });
     }
     
@@ -315,6 +322,100 @@ export class ProfileData {
     getMaintStuff()
     {
         return this.schoolMaintananceData;
+    }
+
+
+    getUserRequests(): any[]
+    {
+        var tempArray = [];
+        tempArray.push(this.submitted);
+        tempArray.push(this.inProgress);
+        tempArray.push(this.complete);
+        
+        return this.requests;
+    }
+    
+    loadUserRequests()
+    {
+        var uid = this.getUID();
+        var requestIDS = [];    
+        
+        var tempSubmitted = [];
+        var tempInProgress = [];
+        var tempComplete = [];
+        
+        firebase.database().ref('/userProfile').child(uid).once("value", snapshot => {
+              if (snapshot.hasChild("schoolName")) {
+                var schoolName = snapshot.val().schoolName;
+                  
+                firebase.database().ref('/userProfile').child(uid).child(schoolName).once("value", snapshot => {
+                    requestIDS = snapshot.val().split("|||");
+                    
+                     console.log("REQUEST HANDLER -> School = " + schoolName + "\nRequests: " + requestIDS);
+                    console.log(requestIDS);
+                    
+                    //do all request stuff here
+                    
+                        for(let requestID of requestIDS)
+                        {
+                            //go through each requestID
+                            console.log("checking: " + requestID);
+                            if(requestID != "")
+                            {
+                                firebase.database().ref('/schoolData/' + schoolName + "/requests/").child(requestID).once("value", snapshot => {
+                                    if (snapshot.val()) {
+                                        // request is submitted - not seen yet
+                                            console.log("request " + requestID + " -> was submitted");
+                                            var tempArray = requestID.split("_0_");
+                                            console.log("TEMP ARRAY: ");
+                                            console.log(tempArray);
+                                            tempSubmitted.push({"category": tempArray[0], "location": tempArray[1], "problem": tempArray[2]});
+                                    }
+                                    else {
+                                        console.log("request " + requestID + " -> NOT submitted");
+                                        
+                                        firebase.database().ref('/schoolData/' + schoolName + "/inProgress/").child(requestID).once("value", snapshot => {
+                                            if (snapshot.val()) {
+                                                // request is in progress
+                                                    console.log("request " + requestID + " -> is inProgress");
+                                                    var tempArray = requestID.split("_0_");
+                                                    console.log("TEMP ARRAY: ");
+                                                    console.log(tempArray);
+                                                    tempInProgress.push({"category": tempArray[0], "location": tempArray[1], "problem": tempArray[2]});
+                                            }
+                                            else {
+                                                console.log("request " + requestID + " -> NOT inProgress");
+                                                
+                                                firebase.database().ref('/schoolData/' + schoolName + "/complete/").child(requestID).once("value", snapshot => {
+                                                    if (snapshot.val()) {
+                                                        // request is submitted - not seen yet
+                                                            console.log("request " + requestID + " -> was submitted");
+                                                            var tempArray = requestID.split("_0_");
+                                                            console.log("TEMP ARRAY: ");
+                                                            console.log(tempArray);
+                                                            tempComplete.push({"category": tempArray[0], "location": tempArray[1], "problem": tempArray[2]});
+                                                    }
+                                                    else {
+                                                        console.log("request " + requestID + " -> NOT FOUND AT ALL - will ignore");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        } 
+                });   
+              }  
+        });
+        
+        
+        this.requests = [];
+
+        this.requests.push(tempSubmitted);
+        this.requests.push(tempInProgress);
+        this.requests.push(tempComplete);
+
     }
     
 }

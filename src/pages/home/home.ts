@@ -4,6 +4,8 @@ import firebase from 'firebase';
 import { ProfileData } from '../../providers/profile-data';
 import { NewRequest } from '../newRequest/newRequest';
 
+import { RequestHandler } from '../../providers/request-handler';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -12,40 +14,33 @@ export class HomePage {
 
     public user: any = null;
     public schoolName: string = "";
-public requestIDS = [];
+    public requestIDS = [];
     
+    public submitted = [];
+    public inProgress = [];
+    public complete = [];
     
-  constructor(public navCtrl: NavController, public profData:ProfileData) {
+constructor(public navCtrl: NavController, public profData:ProfileData, public reqHand: RequestHandler) {
       this.schoolName = this.profData.getSchoolName();
     console.log("HOME CONSTRUCTOR");
   }
     
     ionViewWillEnter() {
         
+        console.log("HOME VIEW_WILL_ENTER");
         
-        //console.log("loaded? " + this.profData.loaded());
+        this.requestIDS = this.profData.getUserRequests();  
+        console.log(this.requestIDS);
         
-        
-        this.user = this.profData.getUser();
-        console.log(this.user.uid);
-        
-        firebase.database().ref('/userProfile').child(this.user.uid).once("value", snapshot => {
-              if (snapshot.hasChild("schoolName")) {
-                this.schoolName = snapshot.val().schoolName;
-              }
-                
-              if (snapshot.hasChild("requestIDS")) {
-                  this.requestIDS = snapshot.val().requestIDS.split("|||");
-              }
-            
-            console.log("HOME -> School = " + this.schoolName + "\nRequests: " + this.requestIDS);
-        });
-        
-        
-        
+        this.submitted = this.requestIDS[0];
+        this.inProgress = this.requestIDS[1];
+        this.complete = this.requestIDS[2];
     }
     
-    
+    viewRequestWithID(requestid: string)
+    {
+        console.log("VIEW: " + requestid);
+    }
     
     newRequest(){
         this.navCtrl.push(NewRequest);

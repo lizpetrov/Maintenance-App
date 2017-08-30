@@ -2,6 +2,7 @@ import { Component, ApplicationRef} from '@angular/core';
 import { NavController, AlertController, ActionSheetController } from 'ionic-angular';
 import { AuthData } from '../../providers/auth-data';
 import { ProfileData } from '../../providers/profile-data';
+import { RequestHandler } from '../../providers/request-handler';
 import firebase from 'firebase';
 import { AngularFire, AngularFireDatabase, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 import { Observable } from 'rxjs/Rx';
@@ -19,7 +20,7 @@ export class ContactPage {
         public schoolList = [];
     public emailEnd: String;
     
-    constructor(public navCtrl: NavController, public authData:AuthData, public profData:ProfileData, public ar: ApplicationRef, public angFire: AngularFire, public alertCtrl: AlertController) {
+    constructor(public navCtrl: NavController, public authData:AuthData, public profData:ProfileData, public ar: ApplicationRef, public angFire: AngularFire, public alertCtrl: AlertController, public reqHandler: RequestHandler) {
         
         this.schoolName = this.profData.getSchoolName();
     }
@@ -97,6 +98,7 @@ export class ContactPage {
                     this.profData.loadOtherData(); 
                     this.schoolName = this.schoolList[0];
                     this.ar.tick();
+                    this.profData.loadUserRequests();
                 }
                 else
                 {                       
