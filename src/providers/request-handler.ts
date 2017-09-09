@@ -17,29 +17,27 @@ export class RequestHandler {
     public schoolName: string = "";
     public requests = [];
     
-    public submitted: any;
-    public inProgress: any;
-    public complete: any;
+
     
    
   constructor(private af: AngularFire, public profData:ProfileData) {
 
     console.log("REQUEST HANDLER CONSTRUCTOR");
       
-      this.submitted = [];   
-      this.inProgress = [];   
-      this.complete = [];   
+  
       
      // this.loadUserRequests();
   }
 
-    submitRequest(category: String, location: String, problem: String, comment: String, school: string, email: String)
+    submitRequest(category: String, location: String, problem: string, comment: String, school: string, email: String)
     {
         var uid = firebase.auth().currentUser.uid;
         
         console.log("Category" + category + "\nLocation: " + location + "\nProblem: " + problem + "\nComment: " + comment + "\nSchool: " + school + "\nEmail: " + email + "\nUID: " + uid);
         
-        var requestID = category + "_0_" + location + "_0_" + problem;
+        var requestID = category + "|||" + location + "|||" + problem;
+        
+        var timeInMs = Date.now();
         
         firebase.database().ref("/schoolData/" + school + "/requests/").once('value', (snapshot) => {
           if (snapshot.hasChild(requestID)) {
@@ -62,7 +60,7 @@ export class RequestHandler {
               
                 firebase.database().ref("/schoolData/" + school + "/requests/").child(requestID).once('value', (snapshot) => {
                   if (snapshot.hasChild("comments")) {
-                    newComment = snapshot.val().comments + "_0_" + newComment;
+                    newComment = snapshot.val().comments + "|||" + newComment;
                   }
                    
                 if (snapshot.hasChild("submittedBy")) {
@@ -77,7 +75,7 @@ export class RequestHandler {
                   }
                     
                     firebase.database().ref("/schoolData/" + school).child("/requests/" + requestID).update(
-                    {timestamp: Date.now(), comments: newComment, submittedBy: newSubmitted});
+                    {timestamp: timeInMs, comments: newComment, submittedBy: newSubmitted});
                     
                 });
               
@@ -87,26 +85,20 @@ export class RequestHandler {
                 // NEW REQUEST
                 
                 firebase.database().ref("/schoolData/" + school).child("/requests").update(
-                {[requestID]: {timestamp: Date.now(), submittedBy: email, comments: comment, timesSubmitted: 1}});
+                {[requestID]: {timestamp: timeInMs, submittedBy: email, comments: comment, timesSubmitted: 1}});
             }
     
 
             //add to user profile
-            firebase.database().ref("/userProfile/" + uid).child(school).once('value', (snapshot) => {
-                var newRequestIDS = requestID;
-                  
-                      var temp = snapshot.val().split("|||");
-                          if(temp.indexOf(requestID) < 0)
-                          {
-                              newRequestIDS = snapshot.val() + "|||" + newRequestIDS;
-                              firebase.database().ref("/userProfile/" + uid).update(
-                              {[school]: newRequestIDS});
-                
-                                this.profData.loadUserRequests();
-                          }
- 
-                    
-            });
+            firebase.database().ref("/userProfile/" + uid).child(school).child("requests").update(
+            {[requestID]: ""});
+
+            this.profData.loadUserRequests();
+
+            //add to history
+            firebase.database().ref("/schoolData/" + school + "/history/").child(category + "|||" + location).child(problem).update(
+                {[timeInMs]: email + "|||" + uid + "|||" + comment});
+            
 
         });
     }

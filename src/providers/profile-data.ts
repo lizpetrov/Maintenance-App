@@ -73,7 +73,9 @@ public requests = [];
                 else
                 {
                     // new user
-                    
+                    this.isAdmin = false;
+                    this.isBanned = false;
+                    this.usersEmail = this.currentUser.email;
                     firebase.database().ref("/userProfile").child(this.currentUser.uid).set({email: this.currentUser.email, name: this.currentUser.displayName});
                     this.emailEnd = this.currentUser.email.split("@")[1];
                     console.log("email: " + this.emailEnd);
@@ -146,6 +148,20 @@ public requests = [];
     
     setSchool()
     {
+        
+            if(this.usersEmail == "")
+            {
+                firebase.database().ref("/userProfile/" + this.currentUser.uid).once('value', (snapshot) => {
+                    
+                      if (snapshot.hasChild("/email")) {
+                        this.usersEmail = snapshot.val().email;
+                      }
+
+                    this.emailEnd = this.usersEmail.split("@")[0].trim();
+                    
+                });
+            }
+        
         
             this.schools = this.angFire.database.list('/schools', { preserveSnapshot: true });
 
@@ -326,86 +342,86 @@ public requests = [];
 
 
     getUserRequests(): any[]
-    {
-        var tempArray = [];
-        tempArray.push(this.submitted);
-        tempArray.push(this.inProgress);
-        tempArray.push(this.complete);
+    {   
+            if(this.requests == [])
+            {
+                this.loadUserRequests();
+            }
         
         return this.requests;
     }
     
     loadUserRequests()
     {
+        console.log("LOAD USER REQUESTS");
+        
         var uid = this.getUID();
         var requestIDS = [];    
         
         var tempSubmitted = [];
-        var tempInProgress = [];
+       // var tempInProgress = [];
         var tempComplete = [];
         
         firebase.database().ref('/userProfile').child(uid).once("value", snapshot => {
               if (snapshot.hasChild("schoolName")) {
                 var schoolName = snapshot.val().schoolName;
                   
-                firebase.database().ref('/userProfile').child(uid).child(schoolName).once("value", snapshot => {
-                    requestIDS = snapshot.val().split("|||");
+                firebase.database().ref('/userProfile').child(uid).child(schoolName + "/requests").once("value", snapshot => {
+                   
+                        var tempArray1 = [];
                     
-                     console.log("REQUEST HANDLER -> School = " + schoolName + "\nRequests: " + requestIDS);
-                    console.log(requestIDS);
-                    
-                    //do all request stuff here
-                    
-                        for(let requestID of requestIDS)
+                        for(var requestID in snapshot.val())
                         {
-                            //go through each requestID
-                            console.log("checking: " + requestID);
-                            if(requestID != "")
-                            {
-                                firebase.database().ref('/schoolData/' + schoolName + "/requests/").child(requestID).once("value", snapshot => {
+                                if(requestID != "")
+                                {
+                                    tempArray1.push(requestID);
+                                }
+                            
+                           
+                            
+                        } 
+                    
+                        for(let tempID of tempArray1)
+                        {
+                             console.log("LOOP IT IN LOAD REQUESTS YO");
+                            //go through each requestID in submitted
+                            console.log("checking: " + tempID);
+                           
+                               // var tempID = tempArray1[tempnum]
+                            
+                                firebase.database().ref('/schoolData/' + schoolName + "/requests/").child(tempID).once("value").then( function(snapshot) {
+                                    console.log("CHECKING FOR REQUEST YO");
                                     if (snapshot.val()) {
                                         // request is submitted - not seen yet
-                                            console.log("request " + requestID + " -> was submitted");
-                                            var tempArray = requestID.split("_0_");
+                                            console.log("request " + tempID + " -> was submitted");
+                                            var tempArray = tempID.split("|||");
                                             console.log("TEMP ARRAY: ");
                                             console.log(tempArray);
-                                            tempSubmitted.push({"category": tempArray[0], "location": tempArray[1], "problem": tempArray[2]});
+                                        tempSubmitted.push({"category": tempArray[0].replace(/_/g,' '), "location": tempArray[1].replace(/_/g,' '), "problem": tempArray[2].replace(/_/g,' ')});
                                     }
-                                    else {
-                                        console.log("request " + requestID + " -> NOT submitted");
-                                        
-                                        firebase.database().ref('/schoolData/' + schoolName + "/inProgress/").child(requestID).once("value", snapshot => {
-                                            if (snapshot.val()) {
-                                                // request is in progress
-                                                    console.log("request " + requestID + " -> is inProgress");
-                                                    var tempArray = requestID.split("_0_");
-                                                    console.log("TEMP ARRAY: ");
-                                                    console.log(tempArray);
-                                                    tempInProgress.push({"category": tempArray[0], "location": tempArray[1], "problem": tempArray[2]});
-                                            }
-                                            else {
-                                                console.log("request " + requestID + " -> NOT inProgress");
-                                                
-                                                firebase.database().ref('/schoolData/' + schoolName + "/complete/").child(requestID).once("value", snapshot => {
-                                                    if (snapshot.val()) {
-                                                        // request is submitted - not seen yet
-                                                            console.log("request " + requestID + " -> was submitted");
-                                                            var tempArray = requestID.split("_0_");
-                                                            console.log("TEMP ARRAY: ");
-                                                            console.log(tempArray);
-                                                            tempComplete.push({"category": tempArray[0], "location": tempArray[1], "problem": tempArray[2]});
-                                                    }
-                                                    else {
-                                                        console.log("request " + requestID + " -> NOT FOUND AT ALL - will ignore");
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
+                            });
+                        }
+                    
+                });   
+                  
+                  
+                firebase.database().ref('/userProfile').child(uid).child(schoolName + "/complete").once("value", snapshot => {
+                   
+                        for(var timestamp in snapshot.val())
+                        {
+                            var requestID = snapshot.val()[timestamp];
+                            
+                            console.log("COMPLETE TIMESTAMP: " + timestamp);
+                            
+                            if(requestID != ""){
+                                var tempArray = requestID.split("|||");
+
+                                tempComplete.push({"category": tempArray[0].replace(/_/g,' '), "location": tempArray[1].replace(/_/g,' '), "problem": tempArray[2].replace(/_/g,' '), "timestamp": timestamp});
                             }
+                            
                         } 
                 });   
+                  
               }  
         });
         
@@ -413,9 +429,90 @@ public requests = [];
         this.requests = [];
 
         this.requests.push(tempSubmitted);
-        this.requests.push(tempInProgress);
         this.requests.push(tempComplete);
+    }
 
+    LoadAndGetUserRequests(): any[]
+    {
+         console.log("LOAD AND GET  USER REQUESTS");
+        
+         
+        var uid = this.getUID();
+        var requestIDS = [];    
+        
+        var tempSubmitted = [];
+       // var tempInProgress = [];
+        var tempComplete = [];
+        
+        firebase.database().ref('/userProfile').child(uid).once("value", snapshot => {
+              if (snapshot.hasChild("schoolName")) {
+                var schoolName = snapshot.val().schoolName;
+                  
+                firebase.database().ref('/userProfile').child(uid).child(schoolName + "/requests").once("value", snapshot => {
+                   
+                        var tempArray1 = [];
+                    
+                        for(var requestID in snapshot.val())
+                        {
+                                if(requestID != "")
+                                {
+                                    tempArray1.push(requestID);
+                                }
+                            
+                           
+                            
+                        } 
+                    
+                        for(let tempID of tempArray1)
+                        {
+                             console.log("LOOP IT IN LOAD REQUESTS YO");
+                            //go through each requestID in submitted
+                            console.log("checking: " + tempID);
+                           
+                               // var tempID = tempArray1[tempnum]
+                            
+                                firebase.database().ref('/schoolData/' + schoolName + "/requests/").child(tempID).once("value").then( function(snapshot) {
+                                    console.log("CHECKING FOR REQUEST YO");
+                                    if (snapshot.val()) {
+                                        // request is submitted - not seen yet
+                                            console.log("request " + tempID + " -> was submitted");
+                                            var tempArray = tempID.split("|||");
+                                            console.log("TEMP ARRAY: ");
+                                            console.log(tempArray);
+                                        tempSubmitted.push({"category": tempArray[0].replace(/_/g,' '), "location": tempArray[1].replace(/_/g,' '), "problem": tempArray[2].replace(/_/g,' ')});
+                                    }
+                            });
+                        }
+                    
+                });   
+                  
+                  
+                firebase.database().ref('/userProfile').child(uid).child(schoolName + "/complete").once("value", snapshot => {
+                   
+                        for(var timestamp in snapshot.val())
+                        {
+                            var requestID = snapshot.val()[timestamp];
+                            
+                            console.log("COMPLETE TIMESTAMP: " + timestamp);
+                            
+                            if(requestID != ""){
+                                var tempArray = requestID.split("|||");
+
+                                tempComplete.push({"category": tempArray[0].replace(/_/g,' '), "location": tempArray[1].replace(/_/g,' '), "problem": tempArray[2].replace(/_/g,' '), "timestamp": timestamp});
+                            }
+                            
+                        } 
+                });   
+                  
+              }  
+        });
+        
+        
+        this.requests = [];
+
+        this.requests.push(tempSubmitted);
+        this.requests.push(tempComplete);
+        return this.requests;
     }
     
 }

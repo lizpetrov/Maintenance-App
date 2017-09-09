@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-navbar primary>
+    <ion-title>
+      View Request
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+    <ion-card>
+        
+        <ion-card-header class="header" no-lines color = {{status}}>
+            {{showStatus}}
+        </ion-card-header>
+        
+        <ion-card-content>
+        
+        <ion-list>
+            
+            <ion-item>
+                <ion-icon name="albums" item-left normal ></ion-icon>
+                <p class="labelText" ion-text color="labelColor">Category</p>
+                <p class="settingText" ion-text color="settingColor">{{category}}</p>
+            </ion-item>
+            
+            <ion-item>
+                <ion-icon name="pin" item-left normal ></ion-icon>
+                <p class="labelText" ion-text color="labelColor">Location</p>
+                <p class="settingText" ion-text color="settingColor">{{location}}</p>
+            </ion-item>
+            
+            <ion-item>
+                <ion-icon name="build" item-left normal ></ion-icon>
+                <p class="labelText" ion-text color="labelColor">Problem</p>
+                <p class="settingText" ion-text color="settingColor">{{problem}}</p>
+            </ion-item>
+            
+            <ion-item *ngIf="status=='requests'">
+                <ion-icon name="trending-up" item-left normal ></ion-icon>
+                <p class="labelText" ion-text color="labelColor">Times Submitted</p>
+                <p class="settingText" ion-text color="settingColor">{{timesSubmitted}}</p>
+            </ion-item>
+            
+            <ion-item  *ngIf="status=='requests'">
+                <ion-icon name="clock" item-left normal ></ion-icon>
+                <p class="labelText" ion-text color="labelColor">Last Submitted</p>
+                <p class="settingText" ion-text color="settingColor">{{lastTimeSubmitted}}</p>
+            </ion-item>
+            
+            <ion-item  *ngIf="status=='complete'">
+                <ion-icon name="clock" item-left normal ></ion-icon>
+                <p class="labelText" ion-text color="labelColor">Completed on</p>
+                <p class="settingText" ion-text color="settingColor">{{lastTimeSubmitted}}</p>
+            </ion-item>
+            
+            
+        </ion-list>
+        
+        <ion-list >
+            <ion-item>
+                <p class = "settingText" ion-text color="labelColor">Comments</p>
+            </ion-item>
+            
+            <ion-item *ngFor="let comment of comments">
+                <ion-icon name="chatbubbles" item-left small ></ion-icon>
+                <p class="item-text-wrap" ion-text text-wrap>{{comment}}</p>
+            </ion-item>
+            <ion-item *ngIf="comments.length == 0">
+                <ion-icon name="chatbubbles" item-left small ></ion-icon>
+                <p>no comments</p>
+            </ion-item>
+        </ion-list>
+            
+            
+        </ion-card-content>
+    </ion-card>
+    
+</ion-content>

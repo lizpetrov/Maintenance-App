@@ -1,34 +1,49 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>My Requests</ion-title>
+  <ion-navbar color="primary">
+    <ion-title ion-text color="light">My Requests</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
     
-    <button ion-button full (click)="newRequest()">New Request</button>
-  <h2>Submitted not seen</h2>
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content>refreshing</ion-refresher-content>
+    </ion-refresher>
+    
+    
+    <button color="primary" ion-button outline block (click)="newRequest()">New Request</button>
+
   
-    <ion-card *ngFor = "let submittedRequest of submitted">
-        <ion-card-header>{{submittedRequest.category}}</ion-card-header>
-        <
-    </ion-card>
-        
         
         <ion-card>
-          <ion-card-header color="submitted">
-            Submitted not yet seen
+          <ion-card-header color="requests">
+            Submitted - waiting for completion
+          </ion-card-header>
+            
+          <ion-list>
+            <button ion-item  *ngFor = "let submittedRequest of submitted"  (click)="viewRequestWithID(submittedRequest.category, submittedRequest.location, submittedRequest.problem, 'requests')">
+                <ion-icon color="submitted" name="more" item-start></ion-icon>
+              <h2>{{submittedRequest.problem}}</h2>
+                <h3>{{submittedRequest.category}} -> {{submittedRequest.location}}</h3>
+            </button>
+          </ion-list>
+        </ion-card>
+    
+        <ion-card>
+          <ion-card-header color="complete">
+           Completed
           </ion-card-header>
 
           <ion-list>
-            <button ion-item  *ngFor = "let submittedRequest of submitted"  (click)="viewRequestWithID(submittedRequest.category + '_0_' + submittedRequest.location + '_0_' + submittedRequest.problem)">
-                <ion-icon color="submitted" name="more" item-start></ion-icon>
-              <h2>{{submittedRequest.problem.replace(/_/g,' ')}}</h2>
-                <h3>{{submittedRequest.category.replace(/_/g, ' ')}}</h3>
+            <button ion-item  *ngFor = "let com of complete"  (click)="viewRequestWithIDandTime(com.category, com.location, com.problem, 'complete', toReadableTime(com.timestamp))">
+                <ion-icon color="complete" name="checkmark" item-start></ion-icon>
+              <h2>{{com.problem}}</h2>
+                <h3>{{com.category}} -> {{com.location}}</h3>
+                <h4>Complete on {{toReadableTime(com.timestamp)}}</h4>
             </button>
-
-
+              
           </ion-list>
         </ion-card>
+    
     
 </ion-content>
